@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.8)
 
 set(NAME Projet_Vulkan)
-# add_subdirectory(vk-bootstrap)
+add_subdirectory(vk-bootstrap)
 
 message(STATUS "using ${CMAKE_GENERATOR}")
 if (CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
@@ -83,7 +83,7 @@ if (WIN32)
     ${SDL_LIBRAIRIES}
   )
 
-  target_link_libraries(${PROJECT_NAME} SDL2 vulkan-1 )#${Vulkan_LIBRARIES})  #vk-bootstrap::vk-bootstrap)
+  target_link_libraries(${PROJECT_NAME} SDL2 vulkan-1 vk-bootstrap::vk-bootstrap)
 elseif (UNIX)
     message(STATUS "CREATING BUILD FOR UNIX")
     target_include_directories(${PROJECT_NAME} PUBLIC
@@ -91,7 +91,7 @@ elseif (UNIX)
       ${TINYOBJ_PATH}
       ${IMG_PATH}
     )
-    target_link_libraries(${PROJECT_NAME} SDL2 ${Vulkan_LIBRARIES}) #vk-bootstrap::vk-bootstrap
+    target_link_libraries(${PROJECT_NAME} SDL2 ${Vulkan_LIBRARIES} vk-bootstrap::vk-bootstrap)
 endif()
 
 
