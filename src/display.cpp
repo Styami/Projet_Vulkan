@@ -1,6 +1,8 @@
 #include "display.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
+#include <cstddef>
+#include <vector>
 
 Display::Display() {
   is_running = true;
@@ -13,8 +15,10 @@ void Display::initDisplay() {
 }
 
 
-void Display::getExtensions(unsigned int& number, const char** names) {
-  SDL_Vulkan_GetInstanceExtensions(window, &number, names);
+std::vector<const char*> Display::getExtensions(unsigned int& number) {
+  std::vector<const char*> names(NULL);
+  SDL_Vulkan_GetInstanceExtensions(window, &number, names.data());
+  return std::vector<const char*>(names);
 }
 
 void Display::loop() {

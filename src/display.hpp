@@ -1,3 +1,4 @@
+#include <vector>
 #define SDL_MAIN_HANDLED
 #define SDL_INCLUDE_VULKAN
 #include <SDL2/SDL.h>
@@ -11,7 +12,7 @@ class Display {
     simple utilisation en getteur de la fonction "getInstance" de SDL2.
     Voir la doc pour plus d'info.
     */
-    void getExtensions(unsigned int& number, const char** names);
+    std::vector<const char*> getExtensions(unsigned int& number);
     void loop();
     void clean();
 

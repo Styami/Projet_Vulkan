@@ -1,5 +1,4 @@
-﻿#include <concepts>
-#include <cstddef>
+﻿#include <stdexcept>
 #include <vector>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
@@ -25,6 +24,15 @@ class VulkanObject {
 	private:
 		Display affichage;
 		VkInstance instance;
+		const std::vector<const char*> validationLayers = {
+			"VK_LAYER_KHRONOS_validation"
+		};
+
+		#ifdef NDEBUG
+			const bool enableValidtionLayers = false;
+		#else
+			const bool enableValidtionLayers = true;
+		#endif
 
 		void initwindow(){
 			affichage.initDisplay();
@@ -33,9 +41,32 @@ class VulkanObject {
 		void initVulkan(){
 			
 		}
+		
+		const bool checkValidationLayerSupport() {
+			unsigned int validationLayerCount = 0;
+
+			vkEnumerateInstanceLayerProperties(&validationLayerCount, nullptr);
+			std::vector<VkLayerProperties> availableLayers(validationLayerCount);
+			vkEnumerateInstanceLayerProperties(&validationLayerCount, availableLayers.data());
+
+			for (const char* validationLayer : validationLayers) {
+				bool found = false;
+
+				for(VkLayerProperties availableLayer : availableLayers) {
+					if(std::strcmp(validationLayer, availableLayer.layerName) == 0) {
+						found = true;
+						break;
+					}
+				}
+				if(!found)
+					return false;
+			}
+			return true;
+		}
 
 		const bool AllExtensionsValide(const char** currentExtensions, const int currentExtensioncount) {
 			unsigned int vkEnumCount = 0;
+
 			vkEnumerateInstanceExtensionProperties(nullptr, &vkEnumCount, nullptr);
 			std::vector<VkExtensionProperties> extensions (vkEnumCount);
 			vkEnumerateInstanceExtensionProperties(nullptr, &vkEnumCount, extensions.data());
@@ -43,7 +74,7 @@ class VulkanObject {
 			for (int i = 0; i < currentExtensioncount; i++) {
 				bool find = false;
 				for(VkExtensionProperties extension : extensions) {
-					if(extension.extensionName == currentExtensions[i]) {
+					if(std::strcmp(extension.extensionName,currentExtensions[i])) {
 						find = true;
 						break;
 					}
@@ -55,7 +86,21 @@ class VulkanObject {
 			return true;
 		}
 
+		std::vector<const char*> getRequiredExtension() {
+			unsigned int extensionNumber = 0;
+			//const char** names = NULL;
+			std::vector<const char*> names = affichage.getExtensions(extensionNumber);
+			if(enableValidtionLayers) {
+				names.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+			}
+			return names;
+		}
+
 		void createInstance() {
+			if(enableValidtionLayers && !checkValidationLayerSupport()) {
+				throw std::runtime_error("validation layers requested, but not available!");
+			}
+
 			VkApplicationInfo appInfo{};
 			appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 			appInfo.pApplicationName = "Hello Triangle";
@@ -68,16 +113,19 @@ class VulkanObject {
 			createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 			createInfo.pApplicationInfo = &appInfo;
 
-			unsigned int extensionNumber = 0;
-			const char** names = NULL;
-			affichage.getExtensions(extensionNumber, names);
-			createInfo.enabledExtensionCount = extensionNumber;
-			createInfo.ppEnabledExtensionNames = names;
+			std::vector<const char*> extensions = getRequiredExtension();
+			createInfo.enabledExtensionCount = extensions.size();
+			createInfo.ppEnabledExtensionNames = extensions.data();
 
+		if(enableValidtionLayers) {
+			createInfo.enabledLayerCount = validationLayers.size();
+			createInfo.ppEnabledLayerNames = validationLayers.data();
+		}	else {
 			createInfo.enabledLayerCount = 0;
+		}
 
 			if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS
-				&& !AllExtensionsValide(names, extensionNumber)) {
+				&& !AllExtensionsValide(extensions.data(), extensions.size())) {
 				std::cerr << "erreur lors de la création de l'instance de Vulkan." << std::endl;
 			} else {
 				std::cout << "L'instance vulkan a été crée avec succès." << std::endl;
