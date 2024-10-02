@@ -2,3 +2,6 @@ build
 .env.cmake
 .cache
 .vs
+builddir
+subprojects
+.vscode
