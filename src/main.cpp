@@ -43,6 +43,7 @@ class VulkanObject {
 			
 		}
 		
+
 		const bool checkValidationLayerSupport() {
 			unsigned int validationLayerCount = 0;
 
@@ -54,7 +55,7 @@ class VulkanObject {
 				bool found = false;
 
 				for(VkLayerProperties availableLayer : availableLayers) {
-					if(std::strcmp(validationLayer, availableLayer.layerName) == 0) {
+					if(!std::strcmp(validationLayer, availableLayer.layerName)) {
 						found = true;
 						break;
 					}
@@ -64,6 +65,8 @@ class VulkanObject {
 			}
 			return true;
 		}
+
+
 
 		const bool AllExtensionsValide(const char** currentExtensions, const int currentExtensioncount) {
 			unsigned int vkEnumCount = 0;
@@ -87,6 +90,8 @@ class VulkanObject {
 			return true;
 		}
 
+
+
 		std::vector<const char*> getRequiredExtension() {
 			unsigned int extensionNumber = 0;
 			//const char** names = NULL;
@@ -96,6 +101,8 @@ class VulkanObject {
 			}
 			return names;
 		}
+
+
 
 		void createInstance() {
 			if(enableValidtionLayers && !checkValidationLayerSupport()) {
@@ -108,7 +115,7 @@ class VulkanObject {
 			appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 			appInfo.pEngineName = "No Engine";
 			appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-   		appInfo.apiVersion = VK_API_VERSION_1_0;
+   			appInfo.apiVersion = VK_API_VERSION_1_0;
 
 			VkInstanceCreateInfo createInfo{};
 			createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -118,12 +125,12 @@ class VulkanObject {
 			createInfo.enabledExtensionCount = extensions.size();
 			createInfo.ppEnabledExtensionNames = extensions.data();
 
-		if(enableValidtionLayers) {
-			createInfo.enabledLayerCount = validationLayers.size();
-			createInfo.ppEnabledLayerNames = validationLayers.data();
-		}	else {
-			createInfo.enabledLayerCount = 0;
-		}
+			if(enableValidtionLayers) {
+				createInfo.enabledLayerCount = validationLayers.size();
+				createInfo.ppEnabledLayerNames = validationLayers.data();
+			}	else {
+				createInfo.enabledLayerCount = 0;
+			}
 
 			if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS
 				&& !AllExtensionsValide(extensions.data(), extensions.size())) {
@@ -146,7 +153,7 @@ class VulkanObject {
 
 
 
-int main()
+int main(int argc, char *argv[])
 {
 	VulkanObject vulkO;
 	vulkO.run();

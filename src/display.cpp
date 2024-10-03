@@ -16,9 +16,10 @@ void Display::initDisplay() {
 
 
 std::vector<const char*> Display::getExtensions(unsigned int& number) {
-  std::vector<const char*> names(NULL);
+  SDL_Vulkan_GetInstanceExtensions(window, &number, nullptr);
+  std::vector<const char*> names(number, NULL);
   SDL_Vulkan_GetInstanceExtensions(window, &number, names.data());
-  return std::vector<const char*>(names);
+  return names;
 }
 
 void Display::loop() {
