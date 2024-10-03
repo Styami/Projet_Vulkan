@@ -93,7 +93,7 @@ elseif (UNIX)
       ${IMG_PATH}
       ${SDL2_INCLUDE_DIRECTORIES}
     )
-    target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRAIRIES} ${Vulkan_LIBRARIES} vk-bootstrap::vk-bootstrap)
+    target_link_libraries(${PROJECT_NAME} SDL2 ${Vulkan_LIBRARIES} vk-bootstrap::vk-bootstrap)
 endif()
 
 

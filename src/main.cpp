@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 #include "display.hpp"
+#include <cstring>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
