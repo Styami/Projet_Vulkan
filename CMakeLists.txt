@@ -37,7 +37,8 @@ if (DEFINED SDL_PATH)
   set(SDL_LIBRARIES "${SDL_PATH}/Lib") # 1.2 Make sure lib path is correct
   set(SDL_FOUND "True")
 else()
-  find_package(sdl2-2.30.6 REQUIRED) # throws error if could not find SDL
+  find_package(SDL2 REQUIRED) # throws error if could not find SDL
+  set(SDL_FOUND "True")
   message(STATUS "Found SDL: $ENV{SDL}")
 endif()
 if (NOT SDL_FOUND)
@@ -50,7 +51,7 @@ file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp ${PROJECT_SOURCE_DIR}/
 
 
 add_executable(${PROJECT_NAME} ${SOURCES})
-add_compile_options(-fsanitize=address)
+add_compile_options(-fsanitize=address -Wall)
 add_link_options(-fsanitize=address)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
@@ -90,8 +91,9 @@ elseif (UNIX)
       ${PROJECT_SOURCE_DIR}/src
       ${TINYOBJ_PATH}
       ${IMG_PATH}
+      ${SDL2_INCLUDE_DIRECTORIES}
     )
-    target_link_libraries(${PROJECT_NAME} SDL2 ${Vulkan_LIBRARIES} vk-bootstrap::vk-bootstrap)
+    target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRAIRIES} ${Vulkan_LIBRARIES} vk-bootstrap::vk-bootstrap)
 endif()
 
 
