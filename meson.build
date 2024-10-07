@@ -1,8 +1,13 @@
-project('Vulkan project', 'cpp')
-
+project('Vulkan project', 'cpp', version: '0.0.1', default_options: ['cpp_std=c++20'])
 subdir('src')
-vulkan_dep = dependency('vulkan')
-sdl2_dep = dependency('sdl2')
-sdl2_main_dep = dependency('sdl2main')
 
-executable('mainDebug', sources, cpp_args : ['-std=c++20', '-g'], win_subsystem: 'windows', dependencies: [sdl2_dep, sdl2_main_dep, vulkan_dep])
+dep = []
+dep += [dependency('vulkan')]
+dep += [dependency('sdl2')]
+
+if build_machine.system() == 'windows'
+    dep += [dependency('sdl2main')]
+    executable('mainDebug', sources:sources, win_subsystem: 'windows', dependencies: dep)
+elif build_machine.system() == 'linux'
+    executable('mainDebug', sources: sources, dependencies: dep)
+endif
