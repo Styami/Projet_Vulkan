@@ -1,4 +1,5 @@
-project('Vulkan project', 'cpp', version: '0.0.1', default_options: ['cpp_std=c++20'])
+project('Vulkan project', 'cpp', version: '0.1',default_options: ['default_library=static', 'cpp_std=c++20'])
+
 subdir('src')
 
 dep = []
