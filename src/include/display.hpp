@@ -1,7 +1,9 @@
-#include <vector>
+#ifndef __DISPLAY__
+#define __DISPLAY__
 #define SDL_MAIN_HANDLED
 #define SDL_INCLUDE_VULKAN
 #include <SDL2/SDL.h>
+#include <vector>
 
 class Display {
   public:
@@ -23,3 +25,5 @@ class Display {
     
     bool is_running;
 };
+
+#endif
